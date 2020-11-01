@@ -1,19 +1,45 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <AsteroidGrid
+      :asteroids="asteroids"
+      header="Near Earth Objects"
+      @remove="remove()"
+    ></AsteroidGrid>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AsteroidGrid from "./components/AsteroidGrid";
+import axios from "axios";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    AsteroidGrid,
+  },
+  data() {
+    return {
+      asteroids: [],
+    };
+  },
+  methods: {
+    fetchAsteroids() {
+      const apikey = "WmoBkz1PKexFyh9bdb1Y6R8dXblEIm05DcRqCPag";
+      const url =
+        "https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=" + apikey;
+      axios.get(url).then((res) => {
+        console.log(res.data);
+        this.asteroids = res.data.near_earth_objects.slice(0, 20);
+      });
+    },
+    remove(index) {
+      this.asteroids.splice(index, 1);
+    },
+  },
+  created() {
+    this.fetchAsteroids();
+  },
+};
 </script>
 
 <style>
